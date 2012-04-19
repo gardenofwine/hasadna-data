@@ -1,6 +1,6 @@
-var H = (function () { 
-    var my = {}, 
-    	APIServer = "http://api.yeda.us",
+var H = (function () {
+    var my = {},
+		APIServer = "http://api.yeda.us",
         useCacheNextRequest = true;
 
     // Low Level API
@@ -13,33 +13,53 @@ var H = (function () {
     		return APIServer+b;
     	}
     }
-        
+
     function shouldCache(params) {
     	if ( !useCacheNextRequest ) {
     		params["hitcache"]=0;
     		useCacheNextRequest = true;
     	}
     }
-        
+
     function DBServerGetJson(path,params,callback) {
     	shouldCache(params);
-    	$.get(joinApiServerPath(path),
-      		  params,
-      		  function (data) {
-      			 callback(data);
-      		  },"jsonp");    	
-    } 
+    	$.jsonp({
+    		"url": joinApiServerPath(path),
+    		"data": params,
+    		callbackParameter : "callback",
+			"success": function (data) {
+				callback(data);
+			},
+			"error": function (XMLHttpRequest, textStatus, errorThrown){
+				callback(null, XMLHttpRequest, textStatus, errorThrown);
+			}
+    	});
+    }
 
     function DBServerGetHtml(path,params,elementId,callback) {
     	shouldCache(params);
-    	$.get(joinApiServerPath(path),
-    		  params,
-			  function (data) {
+    	$.jsonp({
+    		"url": joinApiServerPath(path),
+    		"data": params,
+    		callbackParameter : "callback",
+			"success": function (data) {
 				 $("#"+elementId).html(data);
 				 if ( callback != undefined ) {
 				 	callback($("#"+elementId));
     			 }
-			  },"jsonp");
+			},
+			"error": function (XMLHttpRequest, textStatus, errorThrown){
+				callback(null, XMLHttpRequest, textStatus, errorThrown);
+			}
+    	});
+//    	$.get(joinApiServerPath(path),
+//    		  params,
+//			  function (data) {
+//				 $("#"+elementId).html(data);
+//				 if ( callback != undefined ) {
+//				 	callback($("#"+elementId));
+//    			 }
+//			  },"jsonp");
     }
 
     function DBServerPostJson(path,data,callback) {
@@ -50,41 +70,41 @@ var H = (function () {
       		         			if ( callback != undefined ) {
       		         				callback(ret);
       		         			}
-          	    			}, 
+          	    			},
           	      dataType: "json",
           	      processData: false,
           	      type: "POST" }
-          	      );    	
-    } 
+          	      );
+    }
 
     function DBServerDelete(path,callback) {
         $.ajax( { "url" : joinApiServerPath(path)+"?o=json",
-        	      "type" : "DELETE", 
+        	      "type" : "DELETE",
         		  "success": function (ret) {
       		         			if ( callback != undefined ) {
       		         				callback(ret);
       		         			}
           	    	  		 }
-          	    } );    	
-    } 
+          	    } );
+    }
 
     my.dontCacheNext = function () {
     	useCacheNextRequest = false;
     }
 
     my.newRecord = function( path, data, callback ) {
-        DBServerPostJson( path, JSON.stringify(data), callback );  
+        DBServerPostJson( path, JSON.stringify(data), callback );
     }
 
     my.deleteRecord = function( path, callback ) {
-        DBServerDelete( path, callback );  
+        DBServerDelete( path, callback );
     }
 
     my.getRecord = function(path,callback) {
     	var params = { "o"	   : "jsonp" };
     	DBServerGetJson(path,params,callback);
     }
-    
+
     my.findRecords = function(path,callback,spec,fields,start,limit) {
     	var params = { "o"	   : "jsonp" };
     	if ( spec != undefined ) { params["query"] = JSON.stringify(spec); }
@@ -120,7 +140,7 @@ var H = (function () {
     my.loadLoginHeader = function(elementId) {
     	my.loadRecordTemplate("/data/",elementId,"login-header");
     }
-    
+
     // Tagging
     my.loadTagsForRecord = function(path,elementId) {
     	var spec = { "reference" : path };
@@ -147,7 +167,7 @@ var H = (function () {
     						          "tag" : { "_ref" : selected_item } },
     						        function() {
     						        	my.dontCacheNext();
-    						        	my.loadTagsForRecord(path,elementId); 
+    						        	my.loadTagsForRecord(path,elementId);
     						        } );
     					return false;
     				} );
@@ -155,13 +175,13 @@ var H = (function () {
     					var src = $(this).attr("rel");
     					my.deleteRecord( src, function() {
     						my.dontCacheNext();
-    						my.loadTagsForRecord(path,elementId); 
+    						my.loadTagsForRecord(path,elementId);
     					} );
     				} );
     			}
     	);
     }
-    	
+
     // Starring
     my.loadStarsForRecord = function(path,elementId) {
     	var spec = { "reference" : path };
@@ -183,21 +203,21 @@ var H = (function () {
 	    	    								{ "reference" : path },
 	    	    						        function() {
 	    	    									my.dontCacheNext();
-	    	    						        	my.loadStarsForRecord(path,elementId); 
-	    	    						        } );    								
+	    	    						        	my.loadStarsForRecord(path,elementId);
+	    	    						        } );
     							} );
     							el.find(".H-stars-vote.H-stars-starred").click( function () {
 			    					my.deleteRecord("/data/common/stars/"+slug,
 			    									function() {
 			    										my.dontCacheNext();
-			    										my.loadStarsForRecord(path,elementId); 
-	    	    						        	} );    								
+			    										my.loadStarsForRecord(path,elementId);
+	    	    						        	} );
     							} );
     						}
     				);
     			}
     	);
     }
-    
-    return my; 
+
+    return my;
 }());
