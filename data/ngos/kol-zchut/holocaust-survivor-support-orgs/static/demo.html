@@ -2,19 +2,19 @@
 <html>
   <head>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
-    <link rel="stylesheet" type="text/css" href="http://api.yeda.us/data/static/hasadna-style.css"></link>   
+    <link rel="stylesheet" type="text/css" href="http://api.yeda.us/data/static/hasadna-style.css"></link>
     <style type="text/css">
       html { height: 100% }
       body { height: 100%; margin: 0; padding: 0; direction:rtl; }
       #map_canvas { height: 100% }
-      #login   { width:10%;  top:10px; position:absolute; left:10%; z-index:10; background:#fff; opacity:1; padding:5px; border-radius:5px; font-size:14px; box-shadow: 5px 5px 5px #444; } 
-      #address { width:40%;  top:10px; position:absolute; left:30%; right:30%; z-index:10; background:#fff; opacity:0.5; padding:20px; border-radius:20px; font-size:20px;   box-shadow: 5px 5px 5px #444; } 
+      #login   { width:10%;  top:10px; position:absolute; left:10%; z-index:10; background:#fff; opacity:1; padding:5px; border-radius:5px; font-size:14px; box-shadow: 5px 5px 5px #444; }
+      #address { width:40%;  top:10px; position:absolute; left:30%; right:30%; z-index:10; background:#fff; opacity:0.5; padding:20px; border-radius:20px; font-size:20px;   box-shadow: 5px 5px 5px #444; }
       #address:hover { opacity:1; }
-      #address label { white-space:no-wrap; display:inline-block; width: 30%; } 
+      #address label { white-space:no-wrap; display:inline-block; width: 30%; }
       #address_input { width:65%; text-align:right; padding:2px; border-radius:5px; }
-      #infowindow { margin:10px; white-space: nowrap; overflow: visible visible; } 
+      #infowindow { margin:10px; white-space: nowrap; overflow: visible visible; }
 	  #infowindow-stars { height:30px; width:250px; }
-      #geocoding-options { top:20%; position:absolute; right:3%; z-index:10; background:#fff; opacity:0.5; padding:20px; border-radius:20px; font-size:20px; box-shadow: 5px 5px 5px #444; margin-left:20px; } 
+      #geocoding-options { top:20%; position:absolute; right:3%; z-index:10; background:#fff; opacity:0.5; padding:20px; border-radius:20px; font-size:20px; box-shadow: 5px 5px 5px #444; margin-left:20px; }
       #geocoding-options:hover { opacity:1; }
       #geocoding-options li { list-style:none; }
       #geocoding-options li:hover { background: #ccf; cursor: pointer; }
@@ -23,9 +23,10 @@
     </style>
     <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
 	<script type="text/javascript" src="http://api.yeda.us/data/static/jquery.min.js"></script>
+	<script type="text/javascript" src="http://api.yeda.us/data/static/jquery.jsonp-2.3.0.min.js"></script>
 	<script type="text/javascript" src="http://api.yeda.us/data/static/hasadna-api.js"></script>
 	<script type="text/javascript" src="http://google-maps-utility-library-v3.googlecode.com/svn/tags/markermanager/1.0/src/markermanager_packed.js"></script>
-	
+
 <script type="text/javascript">
 
 var map;
@@ -39,7 +40,7 @@ var icons = new Array();
 function getMarkerImage(iconType) {
 	   if (!icons[iconType]) {
 	      icons[iconType] = new google.maps.MarkerImage("http://api.yeda.us/data/ngos/kol-zchut/holocaust-survivor-support-orgs/static/icon"+ iconType +".png");
-	   } 
+	   }
 	   return icons[iconType];
 }
 
@@ -60,29 +61,29 @@ function refresh_markers() {
 			for ( var i in results ) {
 		    	var result = results[i];
 		        marker = new google.maps.Marker({
-		       		position: new google.maps.LatLng(result.lat,result.lon), 
-		       		map: map, 
+		       		position: new google.maps.LatLng(result.lat,result.lon),
+		       		map: map,
        				icon: getMarkerImage(result.type),
        				title:result.title
    		    	});
-		
+
 	   		    function marker_click_handler(result) {
 	       		   	return function(event) {
 		            	iw.open(map);
 		            	iw.setPosition(event.latLng);
-		            	var iw_content = "<h3>"+result.title+"</h3>" + result.description;			            	
+		            	var iw_content = "<h3>"+result.title+"</h3>" + result.description;
 		            	iw.setContent(iw_content);
 	            	};
    		      	}
-		   		      	
+
          		google.maps.event.addListener(marker, 'click', marker_click_handler(result));
-				newmarkers.push( marker );   
+				newmarkers.push( marker );
             }
-	
-			mgr.addMarkers( newmarkers );	                
+
+			mgr.addMarkers( newmarkers );
 		  },
 	      {},
-	      null,null,2000 );	
+	      null,null,2000 );
 }
 
 $( function () {
@@ -98,7 +99,7 @@ $( function () {
 		name: "OSM",
 		maxZoom: 18
 	});
-	  
+
 	var latlng = new google.maps.LatLng(32.069774,34.777222);
     var myOptions = {
    		zoom: 13,
@@ -107,7 +108,7 @@ $( function () {
   	  	mapTypeControlOptions: {
   	  		mapTypeIds: ['OSM', google.maps.MapTypeId.SATELLITE],
   	  	  	style: google.maps.MapTypeControlStyle.DROPDOWN_MENU
-  	  	}      
+  	  	}
 	};
 
 	map = new google.maps.Map(document.getElementById("map_canvas"),myOptions);

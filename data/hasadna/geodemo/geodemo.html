@@ -2,19 +2,19 @@
 <html>
   <head>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
-    <link rel="stylesheet" type="text/css" href="http://api.yeda.us/data/static/hasadna-style.css"></link>   
+    <link rel="stylesheet" type="text/css" href="http://api.yeda.us/data/static/hasadna-style.css"></link>
     <style type="text/css">
       html { height: 100% }
       body { height: 100%; margin: 0; padding: 0; direction:rtl; }
       #map_canvas { height: 100% }
-      #login   { width:10%;  top:10px; position:absolute; left:10%; z-index:10; background:#fff; opacity:1; padding:5px; border-radius:5px; font-size:14px; box-shadow: 5px 5px 5px #444; } 
-      #address { width:40%;  top:10px; position:absolute; left:30%; right:30%; z-index:10; background:#fff; opacity:0.5; padding:20px; border-radius:20px; font-size:20px;   box-shadow: 5px 5px 5px #444; } 
+      #login   { width:10%;  top:10px; position:absolute; left:10%; z-index:10; background:#fff; opacity:1; padding:5px; border-radius:5px; font-size:14px; box-shadow: 5px 5px 5px #444; }
+      #address { width:40%;  top:10px; position:absolute; left:30%; right:30%; z-index:10; background:#fff; opacity:0.5; padding:20px; border-radius:20px; font-size:20px;   box-shadow: 5px 5px 5px #444; }
       #address:hover { opacity:1; }
-      #address label { white-space:no-wrap; display:inline-block; width: 30%; } 
+      #address label { white-space:no-wrap; display:inline-block; width: 30%; }
       #address_input { width:65%; text-align:right; padding:2px; border-radius:5px; }
-      #infowindow { margin:10px; white-space: nowrap; overflow: visible visible; } 
+      #infowindow { margin:10px; white-space: nowrap; overflow: visible visible; }
 	  #infowindow-stars { height:30px; width:250px; }
-      #geocoding-options { top:20%; position:absolute; right:3%; z-index:10; background:#fff; opacity:0.5; padding:20px; border-radius:20px; font-size:20px; box-shadow: 5px 5px 5px #444; margin-left:20px; } 
+      #geocoding-options { top:20%; position:absolute; right:3%; z-index:10; background:#fff; opacity:0.5; padding:20px; border-radius:20px; font-size:20px; box-shadow: 5px 5px 5px #444; margin-left:20px; }
       #geocoding-options:hover { opacity:1; }
       #geocoding-options li { list-style:none; }
       #geocoding-options li:hover { background: #ccf; cursor: pointer; }
@@ -23,6 +23,7 @@
     </style>
     <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
 	<script type="text/javascript" src="http://api.yeda.us/data/static/jquery.min.js"></script>
+	<script type="text/javascript" src="http://api.yeda.us/data/static/jquery.jsonp-2.3.0.min.js"></script>
 	<script type="text/javascript" src="http://api.yeda.us/data/static/hasadna-api.js"></script>
 	<script type="text/javascript" src="http://google-maps-utility-library-v3.googlecode.com/svn/tags/markermanager/1.0/src/markermanager_packed.js"></script>
 
@@ -37,22 +38,22 @@
 	};
 </script>
 <script type="text/javascript" src="http://www.waze.co.il/js/WazeEmbeddedMapNoJQuery.js"></script>
-	
+
 <script type="text/javascript">
 
 var map;
 
 var icons = new Array();
 function getMarkerImage(iconColor) {
-	   if ((typeof(iconColor)=="undefined") || (iconColor==null)) { 
-	      iconColor = "red"; 
+	   if ((typeof(iconColor)=="undefined") || (iconColor==null)) {
+	      iconColor = "red";
 	   }
 	   if (!icons[iconColor]) {
 	      icons[iconColor] = new google.maps.MarkerImage("http://labs.google.com/ridefinder/images/mm_20_"+ iconColor +".png",
 	      new google.maps.Size(12, 20),
 	      new google.maps.Point(0,0),
 	      new google.maps.Point(6, 20));
-	   } 
+	   }
 	   return icons[iconColor];
 }
 var iconShadow = new google.maps.MarkerImage('http://labs.google.com/ridefinder/images/mm_20_shadow.png',
@@ -77,15 +78,15 @@ function refresh_markers(cache) {
 			for ( var i in results ) {
 		    	var result = results[i];
 		        marker = new google.maps.Marker({
-		       		position: new google.maps.LatLng(result.lat,result.lng), 
-		       		map: map, 
+		       		position: new google.maps.LatLng(result.lat,result.lng),
+		       		map: map,
        				shadow: iconShadow,
        				shape: iconShape,
        				icon: getMarkerImage("red"),
        				title:result.name
    		    	});
 	   		    var name = result.name;
-		
+
 	   		    function marker_click_handler(result) {
 	       		   	return function(event) {
 		            	iw.open(map);
@@ -96,20 +97,20 @@ function refresh_markers(cache) {
 						iw_content += "<h3 id='infowindow-description'>"+result.description+"</h4>";
 						iw_content += "<p>"+result.name+"</p>";
 						iw_content += "<div id='infowindow-stars'></div>";
-						iw_content += "</div>"; 				            	
+						iw_content += "</div>";
 		            	iw.setContent(iw_content);
 		            	H.loadStarsForRecord(result._src,"infowindow-stars");
 	            	};
    		      	}
-		   		      	
+
          		google.maps.event.addListener(marker, 'click', marker_click_handler(result));
-				newmarkers.push( marker );   
+				newmarkers.push( marker );
             }
-	
-			mgr.addMarkers( newmarkers );	                
+
+			mgr.addMarkers( newmarkers );
 		  },
 	      {},
-	      null,null,2000 );	
+	      null,null,2000 );
 }
 
 $( function () {
@@ -125,7 +126,7 @@ $( function () {
 		name: "OSM",
 		maxZoom: 18
 	});
-	  
+
 	var latlng = new google.maps.LatLng(32.069774,34.777222);
     var myOptions = {
    		zoom: 13,
@@ -134,7 +135,7 @@ $( function () {
   	  	mapTypeControlOptions: {
   	  		mapTypeIds: ['OSM', google.maps.MapTypeId.SATELLITE],
   	  	  	style: google.maps.MapTypeControlStyle.DROPDOWN_MENU
-  	  	}      
+  	  	}
 	};
 
 	map = new google.maps.Map(document.getElementById("map_canvas"),myOptions);
@@ -148,8 +149,8 @@ $( function () {
 	refresh_markers();
 
 	H.loadLoginHeader("login");
-	
-	$("#address_form").submit( function () {					
+
+	$("#address_form").submit( function () {
 		g_waze_map.find($("#address_input").val(),"find_callback",true);
 		return false;
 	} );
@@ -160,9 +161,9 @@ var geocoding_click_handler = function(result) {
 		var lat = result.location.lat;
 		var lon = result.location.lon;
 		var gll = new google.maps.LatLng(lat,lon);
-		
+
 		var newmarker = new google.maps.Marker({
-			position: gll, 
+			position: gll,
 			map: map,
 			shadow: iconShadow,
 			shape: iconShape,
@@ -171,7 +172,7 @@ var geocoding_click_handler = function(result) {
 			draggable:true
 		});
 		mgr.addMarker( newmarker );
-		
+
 		var form_iw = new google.maps.InfoWindow();
     	form_iw.open(map);
     	form_iw.setPosition(gll);
@@ -180,41 +181,41 @@ var geocoding_click_handler = function(result) {
 		form_content += "<form id='new_issue_form' action='#'>";
 		form_content += "<div><label for='title'>כותרת</label><input name='title' id='issue_title' type='text'></input></div>";
 		form_content += "<div><label for='details'>פרטים</label><textarea name='description' id='issue_title' cols='50' rows='5'></textarea></div>";
-		form_content += "<div><label></label><input type='submit' value='שלח!'></input></div>";	     	
-		form_content += "<div><label id='loading'></label></div>";	     	
+		form_content += "<div><label></label><input type='submit' value='שלח!'></input></div>";
+		form_content += "<div><label id='loading'></label></div>";
 		form_content += "</form>";
 
 		var form_node = $(form_content);
 		var slug = lat+"_"+lon+"_"+H_login_data.key;
-		
+
     	form_iw.setContent(form_node[0]);
     	form_node.submit( function () {
         	form_node.find("#loading").html("Uploading..");
-    		H.newRecord( "/data/hasadna/geodemo/"+slug, 
+    		H.newRecord( "/data/hasadna/geodemo/"+slug,
     					 { "lat" 		 : lat,
 				           "lng" 		 : lon,
 				           "title" 		 : form_node.find("input[name='title']").val(),
 				           "description" : form_node.find("textarea[name='description']").val()
-    					 }, 
+    					 },
     	    			 function () {
     						refresh_markers(true);
-           	    			 
+
    			 				form_iw.close();
     					 } );
     		return false;
     	} );
-    	
+
 	    function marker_move_handler(newmarker,form_iw) {
       		   	return function(event) {
 	            	form_iw.setPosition(newmarker.getPosition());
     	       	};
       	}
    		google.maps.event.addListener(newmarker, 'dragend', marker_move_handler(newmarker,form_iw));
-		
-		var bounds = new google.maps.LatLngBounds( 
-				new google.maps.LatLng( result.bounds.bottom, 
+
+		var bounds = new google.maps.LatLngBounds(
+				new google.maps.LatLng( result.bounds.bottom,
 										result.bounds.left ),
-				new google.maps.LatLng( result.bounds.top, 
+				new google.maps.LatLng( result.bounds.top,
 										result.bounds.right ) );
 		map.fitBounds( bounds );
 		$("#geocoding-options").css("display","none");
@@ -224,13 +225,13 @@ var geocoding_click_handler = function(result) {
 function find_callback(results) {
 
 	$("#geocoding-options").html("");
-	
+
 	for ( var r in results ) {
 		var result = results[r];
 
-		$("#geocoding-options").append("<li>"+result.name+"</li>");			
+		$("#geocoding-options").append("<li>"+result.name+"</li>");
 		$("#geocoding-options li:last").click( geocoding_click_handler(result) );
-		
+
 	}
 
 	$("#geocoding-options").css("display","inherit");
@@ -255,7 +256,7 @@ function onWazeMapInit(){
   <div id="geocoding-options" style="display:none;"></div>
   <div style="display:none;">
 	<div id="form-iw">
-	</div>  	
+	</div>
   </div>
 </body>
 </html>

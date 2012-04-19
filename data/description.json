@@ -8,7 +8,9 @@
 	"subcatalogs"   : [ "common", "gov", "admin", "hasadna", "ngos" ],
 	"static-files"	: { "hasadna-api.js" : "text/javascript",
                             "jquery.min.js"  : "text/javascript",
-                            "hasadna-style.css" : "text/css" },
+							"jquery.jsonp-2.3.0.min.js" :  "text/javascript",
+                            "hasadna-style.css" : "text/css",
+							},
 	"templates"		   : {
 			"login-header" : "login-header.mustache"
 	}
